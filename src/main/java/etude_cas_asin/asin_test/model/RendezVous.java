@@ -9,6 +9,7 @@ public class RendezVous {
     private LocalDateTime dateHeure;
     private Statut statut;
     private LocalDateTime creeLe;
+    private LocalDateTime dateAnnulation;
 
     public RendezVous() {}
 
@@ -67,6 +68,14 @@ public class RendezVous {
 
     public void setCreeLe(LocalDateTime creeLe) {
         this.creeLe = creeLe;
+    }
+
+    public LocalDateTime getDateAnnulation() {
+        return dateAnnulation;
+    }
+
+    public void setDateAnnulation(LocalDateTime dateAnnulation) {
+        this.dateAnnulation = dateAnnulation;
     }
 
     public boolean estAVenir(LocalDateTime maintenant) {

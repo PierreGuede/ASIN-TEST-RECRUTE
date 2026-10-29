@@ -43,13 +43,13 @@ class ReglesGestionServiceTest {
 
     @Test
     void testTMA102_LimiterTroisParCreneau() {
-        LocalDateTime creneau = LocalDateTime.of(2026, 11, 10, 9, 0);
+        LocalDateTime creneau = LocalDateTime.of(2026, 11, 24, 9, 0);
 
         for (int i = 0; i < 3; i++) {
             CreerRendezVousRequest request = new CreerRendezVousRequest(
                 String.format("012345678%d", i),
                 "CNI",
-                "2026-11-10T09:00"
+                "2026-11-24T09:00"
             );
             RendezVousResponse response = service.creerRendezVous(request);
             assertNotNull(response);
@@ -58,7 +58,7 @@ class ReglesGestionServiceTest {
         CreerRendezVousRequest request4 = new CreerRendezVousRequest(
             "0987654321",
             "CNI",
-            "2026-11-10T09:00"
+            "2026-11-24T09:00"
         );
 
         ErreurMetierException exception = assertThrows(ErreurMetierException.class, () -> {
@@ -129,7 +129,7 @@ class ReglesGestionServiceTest {
         PageRendezVousResponse response = service.listerRendezVousUsager("0203040506", 1);
 
         assertEquals(3, response.total());
-        assertEquals(1, response.rendezVous().get(0).dateHeure().startsWith("02/12/2026"));
+        assertTrue(response.rendezVous().get(0).dateHeure().startsWith("02/12/2026"));
     }
 
     @Test
@@ -163,8 +163,10 @@ class ReglesGestionServiceTest {
         RendezVous rdv = new RendezVous(709L, "0203040506", ServiceType.PASSEPORT, dateRdv, Statut.CONFIRME, dateAnnulation.minusDays(1));
         service.ajouterRendezVous(rdv);
 
+        service.annulerRendezVous(709L);
+
         ErreurMetierException exception = assertThrows(ErreurMetierException.class, () -> {
-            service.creerRendezVous(new CreerRendezVousRequest("9999999999", "CNI", "2026-12-01T10:00"));
+            service.creerRendezVous(new CreerRendezVousRequest("0203040506", "CNI", "2026-12-01T10:00"));
         });
 
         assertEquals(409, exception.getStatusCode());
@@ -214,7 +216,7 @@ class ReglesGestionServiceTest {
         CreerRendezVousRequest request = new CreerRendezVousRequest(
             "0123456789",
             "CNI",
-            "2026-11-01T10:00"
+            "2026-11-03T10:00"
         );
 
         ErreurMetierException exception = assertThrows(ErreurMetierException.class, () -> {

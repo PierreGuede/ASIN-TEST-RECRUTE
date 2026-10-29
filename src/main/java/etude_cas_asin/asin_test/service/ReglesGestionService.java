@@ -74,10 +74,13 @@ public class ReglesGestionService {
 
         long heuresAvant = ChronoUnit.HOURS.between(maintenant, rendezVous.getDateHeure());
         if (heuresAvant < 24) {
-            throw new ErreurMetierException(409, "Annulation impossible moins de 24 h avant le rendez-vous.");
+            rendezVous.setStatut(Statut.ANNULE);
+            rendezVous.setDateAnnulation(maintenant);
+            return;
         }
 
         rendezVous.setStatut(Statut.ANNULE);
+        rendezVous.setDateAnnulation(maintenant);
     }
 
     public RendezVousResponse changerStatut(Long id, String nouveauStatutStr) {
@@ -186,6 +189,18 @@ public class ReglesGestionService {
 
         if (aRendezVousAVenir) {
             throw new ErreurMetierException(409, "Vous avez déjà un rendez-vous à venir.");
+        }
+
+        boolean aAnnulationRecente = rendezVousStore.values().stream()
+            .filter(r -> r.getNpi().equals(npi))
+            .filter(r -> r.getStatut() == Statut.ANNULE)
+            .anyMatch(r -> {
+                long heuresAvant = ChronoUnit.HOURS.between(r.getDateAnnulation(), r.getDateHeure());
+                return heuresAvant < 24;
+            });
+
+        if (aAnnulationRecente) {
+            throw new ErreurMetierException(409, "Annulation impossible moins de 24 h avant le rendez-vous.");
         }
     }
 
