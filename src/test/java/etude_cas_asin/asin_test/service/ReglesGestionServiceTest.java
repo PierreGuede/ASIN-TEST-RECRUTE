@@ -97,7 +97,7 @@ class ReglesGestionServiceTest {
 
         service.annulerRendezVous(709L);
 
-        RendezVous rdvModifie = service.creerRendezVous(new CreerRendezVousRequest("9999999999", "CNI", "2026-12-01T10:00"));
+        RendezVousResponse rdvModifie = service.creerRendezVous(new CreerRendezVousRequest("9999999999", "CNI", "2026-12-01T10:00"));
         assertNotNull(rdvModifie);
     }
 
